@@ -271,11 +271,13 @@ export const productData = [
     image_Url: [
       {
         public_id: "test",
-        url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
+        url: "https://www.apple.com/v/macbook-pro-14-and-16/a/images/overview/hero/intro__ewz1ro7xs14y_large.jpg",
+        // https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png
       },
       {
         public_id: "test",
-        url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
+        url: "https://www.apple.com/v/macbook-pro-14-and-16/a/images/overview/hero/intro__ewz1ro7xs14y_large.jpg",
+        // https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png,
       },
     ],
     shop: {
@@ -331,7 +333,8 @@ export const productData = [
     image_Url: [
       {
         public_id: "test",
-        url: "https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png",
+        url: "https://www.apple.com/v/macbook-pro-14-and-16/a/images/overview/hero/intro__ewz1ro7xs14y_large.jpg",
+        // https://www.istorebangladesh.com/images/thumbs/0000286_macbook-pro-m1_550.png
       },
       {
         public_id: "test",

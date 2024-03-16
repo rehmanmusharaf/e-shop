@@ -1,33 +1,36 @@
 import React, { useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Loginpage } from "./Routes";
+import { Loginpage, Productspage } from "./Routes";
 import { Signuppage } from "./Routes";
 import { Activationpage } from "./Routes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import { server } from "./server";
+import Store from "./redux/store";
+import { loaduser } from "./redux/actions/user";
+import { HomePage } from "./Routes";
+import { BestSellingPage } from "./Routes";
+import { EventsPage } from "./Routes";
+import { FAQPage } from "./Routes";
 const App = () => {
   useEffect(() => {
-    axios
-      .get(`${server}getuser`, { withCredentials: true })
-      .then((resp) => {
-        console.log(resp);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    Store.dispatch(loaduser());
   }, []);
+
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Loginpage />} />
         <Route path="/sign-up" element={<Signuppage />} />
         <Route
           path="/activation/:activation_token"
           element={<Activationpage />}
         />
+        <Route path="/products" element={<Productspage />} />
+        <Route path="/best-selling" element={<BestSellingPage />} />
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/faq" element={<FAQPage />} />
       </Routes>
       <ToastContainer
         position="bottom-center"

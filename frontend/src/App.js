@@ -12,6 +12,7 @@ import { HomePage } from "./Routes";
 import { BestSellingPage } from "./Routes";
 import { EventsPage } from "./Routes";
 import { FAQPage } from "./Routes";
+import { ProductDetailsPage } from "./Routes";
 const App = () => {
   useEffect(() => {
     Store.dispatch(loaduser());
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/best-selling" element={<BestSellingPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route path="/product/:id" element={<ProductDetailsPage />} />
       </Routes>
       <ToastContainer
         position="bottom-center"

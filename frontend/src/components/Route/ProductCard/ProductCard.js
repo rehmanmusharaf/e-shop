@@ -35,15 +35,15 @@ const ProductCard = ({ data, isEvent }) => {
   //     }
   //   }, [wishlist]);
 
-  //   const removeFromWishlistHandler = (data) => {
-  //     setClick(!click);
-  //     dispatch(removeFromWishlist(data));
-  //   };
+  const removeFromWishlistHandler = (data) => {
+    setClick(!click);
+    //     dispatch(removeFromWishlist(data));
+  };
 
-  //   const addToWishlistHandler = (data) => {
-  //     setClick(!click);
-  //     dispatch(addToWishlist(data));
-  //   };
+  const addToWishlistHandler = (data) => {
+    setClick(!click);
+    //     dispatch(addToWishlist(data));
+  };
 
   //   const addToCartHandler = (id) => {
   //     const isItemExists = cart && cart.find((i) => i._id === id);
@@ -77,14 +77,14 @@ const ProductCard = ({ data, isEvent }) => {
             className="w-full h-[170px] object-contain"
           />
         </Link>
-        <Link to={`/shop/preview/${data?.shop._id}`}>
+        <Link to={`/shop/preview/${data?.shop.name}`}>
           <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
         </Link>
         <Link
           to={`${
             isEvent === true
-              ? `/product/${data._id}?isEvent=true`
-              : `/product/${data._id}`
+              ? `/product/${data.id}?isEvent=true`
+              : `/product/${data.id}`
           }`}
         >
           <h4 className="pb-3 font-[500]">
@@ -116,16 +116,16 @@ const ProductCard = ({ data, isEvent }) => {
               className="cursor-pointer absolute right-2 top-5"
               color={click ? "red" : "#333"}
               title="Remove from wishlist"
+              onClick={() => removeFromWishlistHandler(data)}
             />
           ) : (
-            //   onClick={() => removeFromWishlistHandler(data)}
             <AiOutlineHeart
               size={22}
               className="cursor-pointer absolute right-2 top-5"
               color={click ? "red" : "#333"}
               title="Add to wishlist"
+              onClick={() => addToWishlistHandler(data)}
             />
-            //   onClick={() => addToWishlistHandler(data)}
           )}
           <AiOutlineEye
             size={22}

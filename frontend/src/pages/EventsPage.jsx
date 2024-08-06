@@ -5,10 +5,10 @@ import Header from "../components/Layout/Header";
 import Loader from "../components/Layout/Loader";
 import { productData } from "../static/data";
 const EventsPage = () => {
-  const allEvents = productData;
-  const isLoading = false;
+  // const events = productData;
+  // const isLoading = false;
 
-  //   const { allEvents, isLoading } = useSelector((state) => state.events);
+  const { events, isLoading } = useSelector((state) => state.events);
   return (
     <>
       {isLoading ? (
@@ -16,7 +16,7 @@ const EventsPage = () => {
       ) : (
         <div>
           <Header activeHeading={4} />
-          <EventCard active={true} data={allEvents && allEvents[0]} />
+          <EventCard active={true} data={events && events[0]} />
         </div>
       )}
     </>

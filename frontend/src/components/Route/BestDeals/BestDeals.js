@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styles from "../../../style/style";
 import ProductCard from "../ProductCard/ProductCard";
-import { productData } from "../../../static/data";
+// import { productData } from "../../../static/data";
 const BestDeals = () => {
   const [data, setData] = useState([]);
-  //   const { allProducts } = useSelector((state) => state.products);
-  const allProducts = productData;
+  const { seller } = useSelector((state) => state.seller);
+  const { products } = useSelector((state) => state.products);
+  const { allProducts } = useSelector((state) => state.products);
   useEffect(() => {
-    const allProductsData = allProducts ? [...allProducts] : [];
-    const sortedData = allProductsData?.sort(
-      (a, b) => b.total_sell - a.total_sell
-    );
+    // console.log("all products is in Best Deals:", products);
+    const productsData = allProducts ? [...allProducts] : [];
+    // const productsData = allProducts ? [...allProducts] : [];
+    const sortedData = productsData?.sort((a, b) => b.sold_out - a.sold_out);
     const firstFive = sortedData && sortedData.slice(0, 5);
     setData(firstFive);
-  }, [allProducts]);
+    console.log("product Data in Best Deals: ", firstFive);
+  }, [products]);
 
   return (
     <div>

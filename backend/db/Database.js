@@ -7,7 +7,7 @@ function connecttodb() {
       console.log(`Connection Successfull ${resp.connection.host}`);
     })
     .catch((error) => {
-      //   console.log(process.env.mongo_url);
+      // console.log(process.env.mongo_url);
       console.log(`Something Went Wrong ${error}`);
     });
 }

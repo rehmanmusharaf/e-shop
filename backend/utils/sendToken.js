@@ -15,7 +15,7 @@ const sendToken = async (user, statuscode, res) => {
     res.status(500).json({
       success: false,
       message: "Error During token genaration",
-      error,
+      error: error.message,
     });
   }
 };

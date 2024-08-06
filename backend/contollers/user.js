@@ -3,27 +3,38 @@ const path = require("path");
 const usermodel = require("../models/usermodel");
 const router = express.Router();
 const ErrorHandler = require("../utils/Errorhandler.js");
+const fs = require("fs");
 const catchasyncerr = require("../middleware/catchAsyncError.js");
 var jwt = require("jsonwebtoken");
-// const multer = require("multer");
-const { upload } = require("../multer.js");
+const multer = require("multer");
+// const { upload } = require("../multer.js");
 const sendMail = require("../utils/sendMail.js");
 const sendToken = require("../utils/sendToken.js");
 const { isAuthenticated } = require("../middleware/auth.js");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads");
+    // console.log("destination is : ", destination);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 router.post(
   "/api/create-user",
   upload.single("file"),
   async (req, res, next) => {
-    console.log("Api End Point hit");
-    const joinpath = path.join(__dirname + "/uploads");
-    console.log(joinpath);
     const { name, email, password } = req.body;
-    avatar = "NUll";
+    // console.log(req.file);
+    // avatar = "NUll";
     try {
       const userdata = await usermodel.findOne({ email });
       if (userdata) {
-        console.log("User Already Exist!", userdata);
+        // console.log("User Already Exist!", userdata);
         res.status(409).json({ success: false, mesage: "USer Already exist" });
         return next(new ErrorHandler("User Already Exists!", 400));
       }
@@ -34,8 +45,8 @@ router.post(
         email,
         password,
         avatar: {
-          public_id: "avatarPublicId",
-          url: "avatarUrl",
+          public_id: req.file.originalname,
+          url: req.file.filename,
         },
       };
 
@@ -102,7 +113,7 @@ router.post(
 
       // if(result)
       // {
-      console.log("send Token Function Will run ! ");
+      // console.log("send Token Function Will run ! ");
       sendToken(result, 201, res);
       // }
     } catch (error) {
@@ -126,8 +137,9 @@ router.post("/api/login", async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid Credenetials" });
     }
-    console.log("user is ", user);
+    // console.log("user is ", user);
     const validate = await user.comparePassword(password);
+
     // console.log("bcrypt comparison result : ", validate);
 
     if (!validate) {
@@ -154,6 +166,227 @@ router.get("/getuser", isAuthenticated, async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: error.message, error: error });
+  }
+});
+
+router.get("/user/logout", isAuthenticated, (req, res, next) => {
+  try {
+    res.cookie("token", null, {
+      expires: new Date(0),
+      httpOnly: true,
+    });
+    res
+      .status(200)
+      .json({ success: true, messaage: "User Logout Successfully!" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Somethinng Went Wrong ", error });
+  }
+});
+router.put(
+  "/user/update-user-info",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const { name, email, phoneNumber, password } = req.body;
+      // console.log("name is:", name);
+      if (!name || !email || !phoneNumber || !password) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Your Fields is Incomplete Fill" });
+      }
+      const user = await usermodel.findOne({ email }).select("+password");
+      if (!user) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid Credentials" });
+      }
+      // console.log("user is: ", user);
+      const passwordcomaprison = await user.comparePassword(password);
+      if (!passwordcomaprison) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid Crednetials" });
+      }
+      user.name = name;
+      user.email = email;
+      user.phoneNumber = phoneNumber;
+      await user.save();
+      return res.status(200).json({
+        success: true,
+        message: "user Information Updated Successfully",
+        user,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "internaal Server Error",
+        error: error.message,
+      });
+    }
+  }
+);
+
+router.put(
+  "/user/update-avatar",
+  upload.single("file"),
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      // Path to the file you want to delete
+      // console.log("req.file is :", req.file);
+      if (req.file) {
+        const filename = req.user.avatar.url;
+        const filePath = `uploads/${filename}`;
+        await usermodel.findByIdAndUpdate(
+          req.user._id,
+          {
+            avatar: {
+              public_id: req.file.originalname,
+              url: req.file.filename,
+            },
+          },
+          { new: true }
+        );
+        // Delete the file
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            // console.error("Error deleting file:", err);
+            return res.status(500).json({
+              success: false,
+              message: "File Not Deleted!",
+              error: err.message,
+            });
+          }
+          return res
+            .status(200)
+            .json({ success: true, message: "Image Updated Successfully!" });
+        });
+      } else {
+        return res
+          .status(400)
+          .json({ success: false, message: "Image Not Found" });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Image not Deleted!",
+        error: error.message,
+      });
+    }
+  }
+);
+
+router.put(
+  "/user/update-user-addresses",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const user = await usermodel.findById(req.user.id);
+      const addressexist = user.addresses.find((address) => {
+        return address.addressType === req.body.addressType;
+      });
+      if (addressexist) {
+        return res
+          .status(400)
+          .json({ success: false, message: "AddressType Already Exist" });
+      }
+
+      user.addresses.push(req.body);
+      console.log("user is :", user);
+      user.save();
+      return res.status(200).json({
+        success: true,
+        message: "User Addresses Added SSuccessfully",
+        user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal Server Error!",
+        error: error.message,
+      });
+    }
+  }
+);
+
+router.delete(
+  "/user/delete-user-address/:id",
+  isAuthenticated,
+  async (req, res) => {
+    try {
+      // console.log("api end point hit");
+      const { id } = req.params;
+      if (!id) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Address Id Not Found!" });
+      }
+      const user = await usermodel.findById(req.user.id);
+      user.addresses = user.addresses.filter((address) => {
+        return address._id != id;
+      });
+      user.save();
+      return res.status(200).json({
+        success: true,
+        message: "Address Deleted Successfully!",
+        user,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  }
+);
+router.put(
+  "/user/update-user-password",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const { oldPassword, newPassword, confirmPassword } = req.body;
+      // console.log(oldPassword, newPassword, confirmPassword);
+      if (newPassword !== confirmPassword) {
+        return res
+          .status(400)
+          .json({ success: false, message: "New Passord doesn't Match!" });
+      }
+      const user = await usermodel.findById(req.user.id).select("+password");
+      const comparison = await user.comparePassword(oldPassword);
+      if (!comparison) {
+        return res
+          .status(400)
+          .json({ success: flase, message: "Invalid Password" });
+      }
+      user.password = newPassword;
+      user.save();
+      return res.status(200).json({
+        success: true,
+        message: "User Information Updated Successfully!",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  }
+);
+// find user infoormation with the userId
+router.get("/user-info/:id", async (req, res, next) => {
+  try {
+    const user = await usermodel.findById(req.params.id);
+
+    res.status(201).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 

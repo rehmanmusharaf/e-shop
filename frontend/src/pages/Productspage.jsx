@@ -10,23 +10,22 @@ import { productData } from "../static/data";
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const categoryData = searchParams.get("category");
-  const allProducts = productData;
-  const isLoading = false;
-  //   const {allProducts,isLoading} = useSelector((state) => state.products);
+  // const products = productData;
+  // const isLoading = false;
+  const { products, isLoading } = useSelector((state) => state.products);
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
     if (categoryData === null) {
-      const d = allProducts;
+      const d = products;
       setData(d);
     } else {
-      const d =
-        allProducts && allProducts.filter((i) => i.category === categoryData);
+      const d = products && products.filter((i) => i.category === categoryData);
       setData(d);
     }
     //    window.scrollTo(0,0);
-  }, [allProducts]);
+  }, [products]);
 
   return (
     <>

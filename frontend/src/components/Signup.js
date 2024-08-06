@@ -13,12 +13,15 @@ const Singup = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
+  const [file, setFile] = useState(null);
 
   const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    setAvatar(file);
     const reader = new FileReader();
     reader.onload = () => {
       if (reader.readyState === 2) {
-        setAvatar(reader.result);
+        setFile(reader.result);
       }
     };
     reader.readAsDataURL(e.target.files[0]);
@@ -26,29 +29,25 @@ const Singup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // console.log("Servere address is  : ", server);
-    // console.log("avtar is : ", avatar);
-
     const formData = new FormData();
+
     formData.append("file", avatar); // Assuming avatar is a file
     formData.append("name", name);
     formData.append("email", email);
     formData.append("password", password);
-
     // console.log(formData);
-
     axios
       .post(`${server}api/create-user`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         toast.success(res.data.message);
         setName("");
         setEmail("");
         setPassword("");
-        setAvatar();
+        setAvatar(null);
+        setFile(null);
       })
       .catch((error) => {
         console.log(error);
@@ -146,9 +145,9 @@ const Singup = () => {
               ></label>
               <div className="mt-2 flex items-center">
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                  {avatar ? (
+                  {file ? (
                     <img
-                      src={avatar}
+                      src={file}
                       alt="avatar"
                       className="h-full w-full object-cover rounded-full"
                     />

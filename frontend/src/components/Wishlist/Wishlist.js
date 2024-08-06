@@ -6,8 +6,12 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { removeFromWishlist } from "../../redux/actions/wishlist";
 import { addTocart } from "../../redux/actions/cart";
+// import { productData } from "../../static/data";
 
 const Wishlist = ({ setOpenWishlist }) => {
+  // let extracted_array = productData.slice(0, 3);
+  // const wishlist = extracted_array;
+
   const { wishlist } = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
 
@@ -49,10 +53,10 @@ const Wishlist = ({ setOpenWishlist }) => {
               <div className={`${styles.noramlFlex} p-4`}>
                 <AiOutlineHeart size={25} />
                 <h5 className="pl-2 text-[20px] font-[500]">
-                  {wishlist && wishlist.length} items
+                  {wishlist && wishlist.length}
+                  items
                 </h5>
               </div>
-
               {/* cart Single Items */}
               <br />
               <div className="w-full border-t">
@@ -82,9 +86,10 @@ const CartSingle = ({ data, removeFromWishlistHandler, addToCartHandler }) => {
     <div className="border-b p-4">
       <div className="w-full 800px:flex items-center">
         <RxCross1
-          className="cursor-pointer 800px:mb-['unset'] 800px:ml-['unset'] mb-2 ml-2"
+          className="cursor-pointer text-[100px] 800px:mb-['unset'] 800px:ml-['unset'] mb-2 ml-2"
           onClick={() => removeFromWishlistHandler(data)}
         />
+
         <img
           src={`${data?.images[0]?.url}`}
           alt=""
@@ -94,7 +99,7 @@ const CartSingle = ({ data, removeFromWishlistHandler, addToCartHandler }) => {
         <div className="pl-[5px]">
           <h1>{data.name}</h1>
           <h4 className="font-[600] pt-3 800px:pt-[3px] text-[17px] text-[#d02222] font-Roboto">
-            US${totalPrice}
+            US${data.orignalPrice ? data.originalPrice : data.discountPrice}
           </h4>
         </div>
         <div>

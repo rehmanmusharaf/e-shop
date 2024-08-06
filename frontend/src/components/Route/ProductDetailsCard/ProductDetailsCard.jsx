@@ -8,18 +8,18 @@ import {
 import { RxCross1 } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import styles from "../../../style/style";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-// import { addTocart } from "../../../redux/actions/cart";
-// import {
-//   addToWishlist,
-//   removeFromWishlist,
-// } from "../../../redux/actions/wishlist";
+import { addTocart } from "../../../redux/actions/cart";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../../redux/actions/wishlist";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
-  //   const { cart } = useSelector((state) => state.cart);
-  //   const { wishlist } = useSelector((state) => state.wishlist);
-  //   const dispatch = useDispatch();
+  const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const dispatch = useDispatch();
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   //   const [select, setSelect] = useState(false);
@@ -37,36 +37,36 @@ const ProductDetailsCard = ({ setOpen, data }) => {
   };
 
   const addToCartHandler = (id) => {
-    // const isItemExists = cart && cart.find((i) => i._id === id);
-    // if (isItemExists) {
-    //   toast.error("Item already in cart!");
-    // } else {
-    //   if (data.stock < count) {
-    //     toast.error("Product stock limited!");
-    //   } else {
-    //     const cartData = { ...data, qty: count };
-    //     dispatch(addTocart(cartData));
-    //     toast.success("Item added to cart successfully!");
-    //   }
-    // }
+    const isItemExists = cart && cart.find((i) => i._id === id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < count) {
+        toast.error("Product stock limited!");
+      } else {
+        const cartData = { ...data, qty: count };
+        dispatch(addTocart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
   };
 
   useEffect(() => {
-    // if (wishlist && wishlist.find((i) => i._id === data._id)) {
-    //   setClick(true);
-    // } else {
-    //   setClick(false);
-    // }
+    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+      setClick(true);
+    } else {
+      setClick(false);
+    }
   }, []);
 
   const removeFromWishlistHandler = (data) => {
     setClick(!click);
-    // dispatch(removeFromWishlist(data));
+    dispatch(removeFromWishlist(data));
   };
 
   const addToWishlistHandler = (data) => {
     setClick(!click);
-    // dispatch(addToWishlist(data));
+    dispatch(addToWishlist(data));
   };
 
   return (
@@ -83,11 +83,11 @@ const ProductDetailsCard = ({ setOpen, data }) => {
             <div className="block w-full 800px:flex">
               <div className="w-full 800px:w-[50%]">
                 {/* data.images &&  */}
-                <img src={`${data.image_Url[0]?.url}`} alt="" />
+                <img src={`${data.images[0]?.url}`} alt="" />
                 <div className="flex">
                   <Link to={`/shop/preview/${data.id}`} className="flex">
                     <img
-                      src={`${data.image_Url[0]?.url}`}
+                      src={`${data.images[0]?.url}`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />

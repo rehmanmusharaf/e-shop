@@ -7,29 +7,31 @@ import SuggestedProduct from "../components/Products/SuggestedProduct";
 import { useSelector } from "react-redux";
 import { productData } from "../static/data";
 const ProductDetailsPage = () => {
-  // const { allProducts } = useSelector((state) => state.products);
-  const allProducts = productData;
-  // const { allEvents } = useSelector((state) => state.events);
+  const { allProducts } = useSelector((state) => state.products);
+  // const products = productData;
+  const { events } = useSelector((state) => state.events);
   let { id } = useParams();
   const [data, setData] = useState(null);
   const [searchParams] = useSearchParams();
-  // const eventData = searchParams.get("isEvent");
+  const eventData = searchParams.get("isEvent");
 
   useEffect(() => {
-    // if (eventData !== null) {
-    //   // const data = allEvents && allEvents.find((i) => i._id === id);
-    //   // setData(data);
-    // } else {
-    id = Number(id);
-    // console.log(typeof id);
-    // console.log("Al Products : ", allProducts);
-
-    const data = allProducts && allProducts.find((i) => i.id === id);
-    console.log("data of Suggested Product : ", data);
-    setData(data);
-    // }
-  }, [allProducts]);
-  // [allProducts, allEvents]
+    // console.log("ID is :", id);
+    if (eventData !== null) {
+      // console.log("if Conditionn run due to to this Event!");
+      const data = events && events.find((i) => i._id === id);
+      setData(data);
+    } else {
+      // id = Number(id);
+      console.log(typeof id);
+      // console.log("id is :", id);
+      // console.log("Al Products : ", products);
+      const data = allProducts && allProducts.find((i) => i._id == id);
+      // console.log("data of Suggested Product : ", data);
+      setData(data);
+    }
+  }, [allProducts, id, events]);
+  // [products, ]
 
   return (
     <div>
@@ -37,9 +39,7 @@ const ProductDetailsPage = () => {
       {data && (
         <>
           <ProductDetails data={data} />
-          {/* {!eventData && <>{data &&  */}
-          <SuggestedProduct data={data} />
-          {/* }</>} */}
+          {!eventData && <>{data && <SuggestedProduct data={data} />}</>}
         </>
       )}
 

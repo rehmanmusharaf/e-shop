@@ -9,15 +9,15 @@ import Footer from "../components/Layout/Footer";
 import { productData } from "../static/data";
 const BestSellingPage = () => {
   const [data, setData] = useState([]);
-  const allProducts = productData;
-  const isLoading = false;
-  //   const {allProducts,isLoading} = useSelector((state) => state.products);
+  // const products = productData;
+  // const isLoading = false;
+  const { products, isLoading } = useSelector((state) => state.products);
 
   useEffect(() => {
-    const allProductsData = allProducts ? [...allProducts] : [];
-    const sortedData = allProductsData?.sort((a, b) => b.sold_out - a.sold_out);
+    const productsData = products ? [...products] : [];
+    const sortedData = productsData?.sort((a, b) => b.sold_out - a.sold_out);
     setData(sortedData);
-  }, [allProducts]);
+  }, [products]);
 
   return (
     <>

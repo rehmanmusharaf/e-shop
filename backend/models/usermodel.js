@@ -79,7 +79,6 @@ userSchema.methods.getJwtToken = async function () {
   try {
     console.log("JWT TOKEN GEnerate Function Run ! ");
     // console.log("id is ", JSON.parse(this._id));
-
     const token = jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY);
     console.log("User Token Genrated : ", token);
     return token;

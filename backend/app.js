@@ -11,7 +11,7 @@ const shopmodel = require("./models/shopmodel.js");
 const productmodel = require("./models/product.js");
 const orders = require("./contollers/order.js");
 const conversation = require("./contollers/conversation.js");
-// app.use(cors());
+const withdraw = require("./contollers/withdraw.js");
 const corsOptions = {
   origin: "http://localhost:3000",
   credentials: true, //access-control-allow-credentials:true
@@ -58,14 +58,21 @@ app.get("/shop/getseller", shop);
 app.get("/shop/logout", shop);
 app.put("/shop/update-seller-info", shop);
 app.get("/get-shop-info/:id", shop);
+app.get("/admin-all-sellers", shop);
+app.delete("/delete-seller/:id", shop);
+app.put("/update-payment-methods", shop);
+app.delete("/delete-withdraw-method/", shop);
+
 app.post("/product/create-product", product);
 app.get("/get-all-products-shop/:id", product);
 app.delete("/delete-shop-product/:id", product);
 app.get("/get-all-products", product);
 app.put("/create-new-review", product);
+app.get("/admin-all-products", product);
 app.post("/event/create-event", events);
 app.get("/event/getallevents/:id", events);
 app.delete("/event/deleteevent/:id", events);
+app.get("/admin-all-events", events);
 app.get("/coupon/get-coupon-value/:name", coupons);
 app.post("/coupon/create-coupon-code", coupons);
 app.put("/user/update-user-info", user);
@@ -74,6 +81,8 @@ app.put("/user/update-user-addresses", user);
 app.delete("/user/delete-user-address/:id", user);
 app.put("/user/update-user-password", user);
 app.get("/user-info/:id", user);
+app.get("/admin-all-users", user);
+app.delete("/delete-user/:id", user);
 app.post("/payment/process", payment);
 app.get("/payment/stripeapikey", payment);
 app.post("/create-order", orders);
@@ -89,5 +98,7 @@ app.get("/get-all-conversation-user/:id", conversation);
 app.put("/update-last-message/:id", conversation);
 app.post("/create-new-message", message);
 app.get("/get-all-messages/:id", message);
+app.post("/create-withdraw-request", withdraw);
+app.get("/get-all-withdraw-request", withdraw);
 
 module.exports = app;

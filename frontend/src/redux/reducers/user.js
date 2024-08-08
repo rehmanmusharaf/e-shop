@@ -29,7 +29,9 @@ const initialState = {
   isAuthenticated: false,
   isLoading: null,
   user: null,
+  users: null,
   error: null,
+  usersLoading: false,
   successMessage: null,
 };
 
@@ -85,6 +87,17 @@ export const userReducer = createReducer(initialState, (builder) => {
     })
     .addCase("deleteUserAddressFailed", (state, action) => {
       state.isLoading = false;
+      state.error = action.payload;
+    })
+    .addCase("getAllUsersRequest", (state) => {
+      state.usersLoading = true;
+    })
+    .addCase("getAllUsersSuccess", (state, action) => {
+      state.usersLoading = false;
+      state.users = action.payload;
+    })
+    .addCase("getAllUsersFailed", (state, action) => {
+      state.usersLoading = false;
       state.error = action.payload;
     })
     .addCase("CLEAR_ERRORS", (state) => {

@@ -7,9 +7,7 @@ export const getAllOrdersOfUser = (userId) => async (dispatch) => {
     dispatch({
       type: "getAllOrdersUserRequest",
     });
-
     const { data } = await axios.get(`${server}get-all-orders/${userId}`);
-
     dispatch({
       type: "getAllOrdersUserSuccess",
       payload: data.orders,

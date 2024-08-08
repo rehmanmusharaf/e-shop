@@ -50,7 +50,6 @@ export const orderReducer = createReducer(initialState, (builder) => {
       state.adminOrderLoading = false;
       state.error = action.payload;
     })
-
     // Clear errors
     .addCase("clearErrors", (state) => {
       state.error = null;

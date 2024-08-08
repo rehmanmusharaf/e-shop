@@ -21,8 +21,7 @@ const DashboardHero = () => {
     console.log("Seller info is: ", seller);
   }, [dispatch]);
 
-  const availableBalance = 11;
-  // seller?.availableBalance.toFixed();
+  const availableBalance = seller?.availableBalance.toFixed();
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },

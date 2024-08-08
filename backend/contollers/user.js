@@ -10,7 +10,7 @@ const multer = require("multer");
 // const { upload } = require("../multer.js");
 const sendMail = require("../utils/sendMail.js");
 const sendToken = require("../utils/sendToken.js");
-const { isAuthenticated } = require("../middleware/auth.js");
+const { isAuthenticated, isAdmin } = require("../middleware/auth.js");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -390,4 +390,54 @@ router.get("/user-info/:id", async (req, res, next) => {
   }
 });
 
+// all users --- for admin
+router.get(
+  "/admin-all-users",
+  isAuthenticated,
+  isAdmin("Admin"),
+  async (req, res, next) => {
+    try {
+      const users = await usermodel.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        users,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+// delete users --- admin
+router.delete(
+  "/delete-user/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  async (req, res, next) => {
+    try {
+      const user = await usermodel.findById(req.params.id);
+
+      if (!user) {
+        return next(
+          new ErrorHandler("User is not available with this id", 400)
+        );
+      }
+
+      const imageId = user.avatar.public_id;
+
+      await cloudinary.v2.uploader.destroy(imageId);
+
+      await usermodel.findByIdAndDelete(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        message: "User deleted successfully!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 module.exports = router;

@@ -9,14 +9,14 @@ const BestDeals = () => {
   const { products } = useSelector((state) => state.products);
   const { allProducts } = useSelector((state) => state.products);
   useEffect(() => {
-    // console.log("all products is in Best Deals:", products);
+    console.log("all products is in Best Deals:", allProducts);
     const productsData = allProducts ? [...allProducts] : [];
     // const productsData = allProducts ? [...allProducts] : [];
     const sortedData = productsData?.sort((a, b) => b.sold_out - a.sold_out);
     const firstFive = sortedData && sortedData.slice(0, 5);
     setData(firstFive);
     console.log("product Data in Best Deals: ", firstFive);
-  }, [products]);
+  }, [allProducts]);
 
   return (
     <div>

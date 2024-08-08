@@ -44,7 +44,7 @@ const WithdrawMoney = () => {
 
     await axios
       .put(
-        `${server}/shop/update-payment-methods`,
+        `${server}update-payment-methods`,
         {
           withdrawMethod,
         },
@@ -63,13 +63,14 @@ const WithdrawMoney = () => {
         });
       })
       .catch((error) => {
-        console.log(error.response.data.message);
+        console.log("error is:", error);
+        // console.log(error.response.data.message);
       });
   };
 
   const deleteHandler = async () => {
     await axios
-      .delete(`${server}/shop/delete-withdraw-method`, {
+      .delete(`${server}delete-withdraw-method`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -89,7 +90,7 @@ const WithdrawMoney = () => {
       const amount = withdrawAmount;
       await axios
         .post(
-          `${server}/withdraw/create-withdraw-request`,
+          `${server}create-withdraw-request`,
           { amount },
           { withCredentials: true }
         )
@@ -99,8 +100,7 @@ const WithdrawMoney = () => {
     }
   };
 
-  const availableBalance = 111;
-  //   seller?.availableBalance.toFixed(2);
+  const availableBalance = seller?.availableBalance.toFixed(2);
 
   return (
     <div className="w-full h-[90vh] p-8">

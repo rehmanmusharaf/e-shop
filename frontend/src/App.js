@@ -45,6 +45,14 @@ import ShopSettingsPage from "./pages/Shop/ShopSettingsPage";
 import ShopWithDrawMoneyPage from "./pages/Shop/ShopWithDrawMoneyPage";
 import ShopInboxPage from "./pages/Shop/ShopInboxPage";
 import UserInbox from "./pages/UserInbox";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
+import AdminDashboardUsers from "./pages/AdminDashboardUsers";
+import AdminDashboardSellers from "./pages/AdminDashboardSellers";
+import AdminDashboardOrders from "./pages/AdminDashboardOrders";
+import AdminDashboardProducts from "./pages/AdminDashboardProducts";
+import AdminDashboardEvents from "./pages/AdminDashboardEvents";
+import AdminDashboardWithdraw from "./pages/AdminDashboardWithdraw";
 
 const App = () => {
   const [stripeApikey, setStripeApiKey] = useState("");
@@ -108,6 +116,64 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-sellers"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardSellers />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-orders"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardOrders />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-products"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardProducts />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-events"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardEvents />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-users"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardUsers />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-withdraw-request"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardWithdraw />
+            </ProtectedAdminRoute>
+          }
+        />
+
         <Route
           path="/seller-acount/:activation_token"
           element={<Activationpage />}
@@ -180,9 +246,9 @@ const App = () => {
         <Route
           path="/checkout"
           element={
-            <ShopProtectedRoute>
+            <ProtectedRoute>
               <CheckoutPage />
-            </ShopProtectedRoute>
+            </ProtectedRoute>
           }
         />
         <Route

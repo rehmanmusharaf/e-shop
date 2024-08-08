@@ -9,6 +9,7 @@ const eventmodel = require("../models/event.js");
 const {
   isAuthenticated,
   sellerAuthenticated,
+  isAdmin,
 } = require("../middleware/auth.js");
 const { upload } = require("../multer.js");
 
@@ -114,4 +115,23 @@ router.delete("/event/deleteevent/:id", async (req, res, next) => {
     });
   }
 });
+// all events --- for admin
+router.get(
+  "/admin-all-events",
+  isAuthenticated,
+  isAdmin("Admin"),
+  async (req, res, next) => {
+    try {
+      const events = await eventmodel.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        events,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 module.exports = router;

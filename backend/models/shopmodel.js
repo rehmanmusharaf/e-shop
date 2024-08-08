@@ -35,10 +35,36 @@ const shopschema = new mongoose.Schema({
     type: String,
     required: [true, "Please Enter your Zip Code ! "],
   },
+  withdrawMethod: {
+    type: Object,
+  },
   address: {
     type: String,
     required: true,
   },
+  availableBalance: {
+    type: Number,
+    default: 0,
+  },
+  transections: [
+    {
+      amount: {
+        type: Number,
+        required: true,
+      },
+      status: {
+        type: String,
+        default: "Processing",
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now(),
+      },
+      updatedAt: {
+        type: Date,
+      },
+    },
+  ],
   phoneNumber: {
     type: Number,
     required: [true, "Please Enter Your Phone Number"],

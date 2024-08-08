@@ -5,6 +5,9 @@ import EventCard from "./EventCard";
 
 const Events = () => {
   const { events, isLoading } = useSelector((state) => state.events);
+  useEffect(() => {
+    console.log("events from Best Deals", events);
+  }, [events]);
   // const {seller}=useSelector((state)=>state.seller)
   // console.log("all Events is in Home Page :", events);
   // const events = [

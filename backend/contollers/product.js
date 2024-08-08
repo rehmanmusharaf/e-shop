@@ -14,6 +14,7 @@ const Order = require("../models/order.js");
 const {
   isAuthenticated,
   sellerAuthenticated,
+  isAdmin,
 } = require("../middleware/auth.js");
 
 // const multer = require("multer");
@@ -211,5 +212,25 @@ router.put("/create-new-review", isAuthenticated, async (req, res, next) => {
     return next(new ErrorHandler(error, 400));
   }
 });
+
+// all products --- for admin
+router.get(
+  "/admin-all-products",
+  isAuthenticated,
+  isAdmin("Admin"),
+  async (req, res, next) => {
+    try {
+      const products = await product.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
 
 module.exports = router;

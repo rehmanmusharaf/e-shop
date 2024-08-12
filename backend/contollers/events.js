@@ -6,6 +6,8 @@ const router = express.Router();
 const ErrorHandler = require("../utils/Errorhandler.js");
 const catchasyncerr = require("../middleware/catchAsyncError.js");
 const eventmodel = require("../models/event.js");
+const cloudinary = require("cloudinary").v2;
+
 const {
   isAuthenticated,
   sellerAuthenticated,
@@ -13,53 +15,71 @@ const {
 } = require("../middleware/auth.js");
 const { upload } = require("../multer.js");
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads");
-//     // Destination folder where files will be stored
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, file.originalname);
-//     // Use the original filename
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-
-// sellerAuthenticated,
-
 router.post(
   "/event/create-event",
   upload.array("images"),
   async (req, res, next) => {
     try {
-      console.log("req.file is:", req.files);
-      // console.log("req.body is :", req.body);
-      const files = req.files;
       const { shopId } = req.body;
-      const id = shopId;
-      const shop = await shopmodel.findById(id);
-      if (shop == null) {
+      const shop = await shopmodel.findById(shopId);
+      if (!shop) {
         return res
           .status(401)
-          .json({ success: false, message: "shop not Found! " });
+          .json({ success: false, message: "Shop not found!" });
       }
+
+      // Initialize arrays for storing results
+      let imagesLinks = [];
+      let response = [];
+
+      // Upload all files to Cloudinary
+      const uploadPromises = req.files.map((file) => {
+        return new Promise((resolve, reject) => {
+          cloudinary.uploader.upload(file.path, (error, result) => {
+            if (error) {
+              console.log("cloudinary image upload error:", error);
+              reject(error);
+            } else {
+              console.log("cloudinary image upload result:", result);
+              resolve(result);
+            }
+          });
+        });
+      });
+
+      response = await Promise.all(uploadPromises);
+
+      // Map upload results to imagesLinks
+      response.forEach((element) => {
+        imagesLinks.push({
+          public_id: element.public_id,
+          url: element.secure_url,
+        });
+      });
+
+      // Prepare event data for saving
       let eventdata = req.body;
+      eventdata.images = imagesLinks;
+      console.log("event data", eventdata);
+
       eventdata.shop = shop;
-      if (eventdata === null) {
+
+      console.log("Event data before saving:", eventdata);
+
+      if (!eventdata) {
         return res
           .status(400)
-          .json({ success: false, message: "Information NOt Properly found!" });
+          .json({ success: false, message: "Information not properly found!" });
       }
-      eventdata.images = files.map((value, index) => {
-        return { public_id: value.originalname, url: value.filename };
-      });
+
+      // Save event data
       const data = await eventmodel.create(eventdata);
+      console.log("Data is:", data);
       res
         .status(200)
-        .json({ success: true, message: "Information Found! ", data });
-      // res.status(200).json({ shop });
+        .json({ success: true, message: "Information found!", data });
     } catch (error) {
+      console.error("Error is:", error);
       return res.status(500).json({
         success: false,
         message: "Internal Server Error",
@@ -68,6 +88,7 @@ router.post(
     }
   }
 );
+
 // sellerAuthenticated,
 router.get("/event/getallevents/:id", async (req, res, next) => {
   try {
@@ -99,6 +120,27 @@ router.delete("/event/deleteevent/:id", async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Id NOt Found" });
     }
     const result = await eventmodel.findByIdAndDelete({ _id: id });
+    // const result = await eventmodel.findById(id);
+
+    if (result && result.images) {
+      for (let i = 0; i < result.images.length; i++) {
+        try {
+          console.log("result.images is:", result.images);
+          const result2 = await cloudinary.uploader.destroy(
+            result.images[i].public_id
+          );
+          console.log(
+            `Deleted image with public_id ${result2.images[i].public_id}: ${result2}`
+          );
+        } catch (error) {
+          console.error(
+            `Failed to delete image with public_id ${result.images[i].public_id}:`,
+            error
+          );
+        }
+      }
+    }
+
     if (result == null) {
       return res
         .status(400)
@@ -115,6 +157,34 @@ router.delete("/event/deleteevent/:id", async (req, res, next) => {
     });
   }
 });
+
+// delete event of a shop
+router.delete("/delete-shop-event/:id", async (req, res, next) => {
+  try {
+    console.log("delete event end point hit?");
+    const event = await eventmodel.findById(req.params.id);
+
+    if (!event) {
+      return next(new ErrorHandler("event is not found with this id", 404));
+    }
+
+    // for (let i = 0; 1 < event.images.length; i++) {
+    //   const result = await cloudinary.v2.uploader.destroy(
+    //     event.images[i].public_id
+    //   );
+    // }
+
+    await event.deleteOne();
+
+    res.status(201).json({
+      success: true,
+      message: "Event Deleted successfully!",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error, 400));
+  }
+});
+
 // all events --- for admin
 router.get(
   "/admin-all-events",
@@ -134,4 +204,31 @@ router.get(
     }
   }
 );
+
+// get all events
+router.get("/get-all-events", async (req, res, next) => {
+  try {
+    const events = await eventmodel.find();
+    res.status(201).json({
+      success: true,
+      events,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error, 400));
+  }
+});
+
+// get all events of a shop
+router.get("/get-all-events/:id", async (req, res, next) => {
+  try {
+    const events = await Event.find({ shopId: req.params.id });
+
+    res.status(201).json({
+      success: true,
+      events,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error, 400));
+  }
+});
 module.exports = router;

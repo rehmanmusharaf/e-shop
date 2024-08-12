@@ -11,13 +11,15 @@ const BestSellingPage = () => {
   const [data, setData] = useState([]);
   // const products = productData;
   // const isLoading = false;
-  const { products, isLoading } = useSelector((state) => state.products);
-
+  const { products, allProducts, isLoading } = useSelector(
+    (state) => state.products
+  );
   useEffect(() => {
-    const productsData = products ? [...products] : [];
+    console.log("products at best selling is:", allProducts);
+    const productsData = allProducts ? [...allProducts] : [];
     const sortedData = productsData?.sort((a, b) => b.sold_out - a.sold_out);
     setData(sortedData);
-  }, [products]);
+  }, [allProducts]);
 
   return (
     <>

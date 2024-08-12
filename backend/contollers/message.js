@@ -10,9 +10,11 @@ router.post(
   "/create-new-message",
   catchAsyncErrors(async (req, res, next) => {
     try {
+      console.log("create new message api end point hit!************");
       const messageData = req.body;
 
       if (req.body.images) {
+        console.log("images data is:", req.body.images);
         const myCloud = await cloudinary.v2.uploader.upload(req.body.images, {
           folder: "messages",
         });

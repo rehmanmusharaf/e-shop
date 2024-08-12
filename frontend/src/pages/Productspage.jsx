@@ -12,20 +12,26 @@ const ProductsPage = () => {
   const categoryData = searchParams.get("category");
   // const products = productData;
   // const isLoading = false;
-  const { products, isLoading } = useSelector((state) => state.products);
+  const { products, allProducts, isLoading } = useSelector(
+    (state) => state.products
+  );
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
+    console.log("allproducts are:", allProducts);
+    console.log("CategoryData are:", categoryData);
+
     if (categoryData === null) {
-      const d = products;
+      const d = allProducts;
       setData(d);
     } else {
-      const d = products && products.filter((i) => i.category === categoryData);
+      const d =
+        allProducts && allProducts.filter((i) => i.category === categoryData);
       setData(d);
     }
     //    window.scrollTo(0,0);
-  }, [products]);
+  }, [allProducts]);
 
   return (
     <>

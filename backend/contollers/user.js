@@ -6,23 +6,24 @@ const ErrorHandler = require("../utils/Errorhandler.js");
 const fs = require("fs");
 const catchasyncerr = require("../middleware/catchAsyncError.js");
 var jwt = require("jsonwebtoken");
-const multer = require("multer");
-// const { upload } = require("../multer.js");
+// const multer = require("../multer");
 const sendMail = require("../utils/sendMail.js");
 const sendToken = require("../utils/sendToken.js");
 const { isAuthenticated, isAdmin } = require("../middleware/auth.js");
+const { upload } = require("../multer.js");
+const cloudinary = require("cloudinary");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-    // console.log("destination is : ", destination);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
-  },
-});
-const upload = multer({ storage: storage });
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads");
+//     // console.log("destination is : ", destination);
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//     cb(null, uniqueSuffix + "-" + file.originalname);
+//   },
+// });
+// const upload = multer({ storage: storage });
 
 router.post(
   "/api/create-user",
@@ -234,41 +235,67 @@ router.put(
   isAuthenticated,
   async (req, res, next) => {
     try {
+      console.log("end poitn hit!");
+      let existsUser = await usermodel.findById(req.user.id);
+      console.log("req.file is:", req.file);
+      if (req.body.file !== "") {
+        const imageId = existsUser.avatar.public_id;
+        await cloudinary.v2.uploader.destroy(imageId);
+
+        const myCloud = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: "avatars",
+          width: 150,
+        });
+
+        existsUser.avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
+      console.log("now existin guse is:", existsUser);
+      await existsUser.save();
+
+      res.status(200).json({
+        success: true,
+        user: existsUser,
+      });
+
       // Path to the file you want to delete
       // console.log("req.file is :", req.file);
-      if (req.file) {
-        const filename = req.user.avatar.url;
-        const filePath = `uploads/${filename}`;
-        await usermodel.findByIdAndUpdate(
-          req.user._id,
-          {
-            avatar: {
-              public_id: req.file.originalname,
-              url: req.file.filename,
-            },
-          },
-          { new: true }
-        );
-        // Delete the file
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            // console.error("Error deleting file:", err);
-            return res.status(500).json({
-              success: false,
-              message: "File Not Deleted!",
-              error: err.message,
-            });
-          }
-          return res
-            .status(200)
-            .json({ success: true, message: "Image Updated Successfully!" });
-        });
-      } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "Image Not Found" });
-      }
+      // if (req.file) {
+      //   const filename = req.user.avatar.url;
+      //   const filePath = `uploads/${filename}`;
+      //   await usermodel.findByIdAndUpdate(
+      //     req.user._id,
+      //     {
+      //       avatar: {
+      //         public_id: req.file.originalname,
+      //         url: req.file.filename,
+      //       },
+      //     },
+      //     { new: true }
+      //   );
+      //   // Delete the file
+      //   fs.unlink(filePath, (err) => {
+      //     if (err) {
+      //       // console.error("Error deleting file:", err);
+      //       return res.status(500).json({
+      //         success: false,
+      //         message: "File Not Deleted!",
+      //         error: err.message,
+      //       });
+      //     }
+      //     return res
+      //       .status(200)
+      //       .json({ success: true, message: "Image Updated Successfully!" });
+      //   });
+      // } else {
+      //   return res
+      //     .status(400)
+      //     .json({ success: false, message: "Image Not Found" });
+      // }
     } catch (error) {
+      console.log("error is:", error);
       return res.status(500).json({
         success: false,
         message: "Image not Deleted!",

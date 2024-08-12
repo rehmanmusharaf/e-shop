@@ -12,8 +12,11 @@ const productmodel = require("./models/product.js");
 const orders = require("./contollers/order.js");
 const conversation = require("./contollers/conversation.js");
 const withdraw = require("./contollers/withdraw.js");
+const cloudinary = require("cloudinary").v2;
+// const multer = require("multer");
+// var upload = multer();
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: process.env.frontendurl,
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
@@ -21,7 +24,24 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/", express.static("uploads"));
+app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
+// for parsing application/json
+// app.use(
+//   bodyparser.json({
+//     limit: "50mb",
+//   })
+// );
+// for parsing application/xwww-form-urlencoded
+// app.use(
+//   bodyparser.urlencoded({
+//     limit: "50mb",
+//     extended: true,
+//   })
+// );
+
+// for parsing multipart/form-data
+// app.use(upload.array());
 // app.use(express.urlencoded({ extended: false }));
 
 connecttodb();
@@ -34,6 +54,12 @@ const events = require("./contollers/events.js");
 const payment = require("./contollers/payment");
 const order = require("./models/order.js");
 const message = require("./contollers/message.js");
+const { upload } = require("./multer.js");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 app.get("/", (req, res) => {
   // console.log("Server IS Listning!");
   try {
@@ -44,6 +70,25 @@ app.get("/", (req, res) => {
       .status(500)
       .json({ message: "Something Went Wrong!", error: error.message });
   }
+});
+app.post("/test", upload.array("files"), async (req, res) => {
+  let response = [];
+  console.log("req.files is:", req.files);
+  const uploadPromises = req.files.map((file) => {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(file.path, (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  });
+
+  response = await Promise.all(uploadPromises);
+  console.log("here is the upload Result", response);
+  res.status(200).json({ success: true, result: response });
 });
 app.post("/api/create-user", user);
 app.post("/api/activation", user);
@@ -71,8 +116,11 @@ app.put("/create-new-review", product);
 app.get("/admin-all-products", product);
 app.post("/event/create-event", events);
 app.get("/event/getallevents/:id", events);
+app.get("/get-all-events", events);
 app.delete("/event/deleteevent/:id", events);
 app.get("/admin-all-events", events);
+app.delete("/delete-shop-event/:id", events);
+
 app.get("/coupon/get-coupon-value/:name", coupons);
 app.post("/coupon/create-coupon-code", coupons);
 app.put("/user/update-user-info", user);
@@ -100,5 +148,5 @@ app.post("/create-new-message", message);
 app.get("/get-all-messages/:id", message);
 app.post("/create-withdraw-request", withdraw);
 app.get("/get-all-withdraw-request", withdraw);
-
+app.put("/update-withdraw-request/:id", withdraw);
 module.exports = app;

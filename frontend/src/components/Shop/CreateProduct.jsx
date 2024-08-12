@@ -37,7 +37,7 @@ const CreateProduct = () => {
 
   const handleImageChange = (e) => {
     const filess = Array.from(e.target.files);
-    setFiles([...e.target.files]);
+    setFiles((prev) => [...prev, ...e.target.files]);
     // setImages([]);
     filess.forEach((file) => {
       const reader = new FileReader();
@@ -76,6 +76,7 @@ const CreateProduct = () => {
     try {
       const newForm = new FormData();
       files.forEach((image, index) => {
+        console.log("files.foreach run!", image);
         newForm.append("images", image);
       });
       newForm.append("name", name);

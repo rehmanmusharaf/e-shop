@@ -62,6 +62,9 @@ const ProfileContent = ({ active }) => {
         axios
           .put(`${server}user/update-avatar`, newForm, {
             withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data", // Optional, Axios should set this
+            },
           })
           .then((response) => {
             dispatch(loaduser());
@@ -85,7 +88,7 @@ const ProfileContent = ({ active }) => {
           <div className="flex justify-center w-full">
             <div className="relative">
               <img
-                src={`${server}${user?.avatar?.url}`}
+                src={`${user?.avatar?.url}`}
                 className="w-[150px] h-[150px] rounded-full object-cover border-[3px] border-[#3ad132]"
                 alt=""
               />

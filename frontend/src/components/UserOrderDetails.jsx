@@ -11,8 +11,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const UserOrderDetails = () => {
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+
   const { orders } = useSelector((state) => state.order);
-  const { user } = useSelector((state) => state.user);
+  // const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [comment, setComment] = useState("");
@@ -65,6 +67,29 @@ const UserOrderDetails = () => {
         toast.error(error.response.data.message);
       });
   };
+  // const handleMessageSubmit = async () => {
+  //   if (isAuthenticated) {
+  //     const groupTitle = data._id + user._id;
+  //     const userId = user._id;
+  //     const sellerId = data.shop._id;
+  //     console.log("Handle Submit Function Run!");
+  //     await axios
+  //       .post(`${server}create-new-conversation`, {
+  //         groupTitle,
+  //         userId,
+  //         sellerId,
+  //       })
+  //       .then((res) => {
+  //         console.log("response is: ", res);
+  //         navigate(`/inbox?${res.data.conversation._id}`);
+  //       })
+  //       .catch((error) => {
+  //         toast.error(error.response.data.message);
+  //       });
+  //   } else {
+  //     toast.error("Please login to create a conversation");
+  //   }
+  // };
 
   return (
     <div className={`py-4 min-h-screen ${styles.section}`}>
@@ -237,9 +262,9 @@ const UserOrderDetails = () => {
         </div>
       </div>
       <br />
-      <Link to="/">
+      <button onClick={handleMessageSubmit}>
         <div className={`${styles.button} text-white`}>Send Message</div>
-      </Link>
+      </button>
       <br />
       <br />
     </div>

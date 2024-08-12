@@ -1,13 +1,21 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "../../style/style";
 import EventCard from "./EventCard";
-
+import { getAllEvents } from "../../redux/actions/events";
+import { get } from "mongoose";
+import AllEvents from "../Shop/AllEvents";
 const Events = () => {
-  const { events, isLoading } = useSelector((state) => state.events);
+  const dispatch = useDispatch();
+  const { allEvents, isLoading } = useSelector((state) => state.events);
   useEffect(() => {
-    console.log("events from Best Deals", events);
-  }, [events]);
+    dispatch(getAllEvents());
+    // console.log("events from Best Deals", allEvents);
+  }, []);
+  useEffect(() => {
+    // dispatch(getallEvents());
+    // console.log("events from Best Deals", allEvents);
+  }, [allEvents]);
   // const {seller}=useSelector((state)=>state.seller)
   // console.log("all Events is in Home Page :", events);
   // const events = [
@@ -47,15 +55,17 @@ const Events = () => {
   // const isLoading = false;
   return (
     <div>
-      {!isLoading && (
+      {allEvents?.length > 0 && (
         <div className={`${styles.section}`}>
           <div className={`${styles.heading}`}>
             <h1>Popular Events</h1>
           </div>
 
           <div className="w-full grid">
-            {events?.length !== 0 && <EventCard data={events && events[0]} />}
-            <h4>{events?.length === 0 && "No Events have!"}</h4>
+            {allEvents?.length !== 0 && (
+              <EventCard data={allEvents && allEvents[0]} />
+            )}
+            <h4>{allEvents?.length === 0 && "No Events have!"}</h4>
           </div>
         </div>
       )}

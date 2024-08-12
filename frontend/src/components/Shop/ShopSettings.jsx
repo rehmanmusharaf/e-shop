@@ -21,19 +21,21 @@ const ShopSettings = () => {
   const dispatch = useDispatch();
 
   const handleImage = async (e) => {
+    const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onload = () => {
       if (reader.readyState === 2) {
         setAvatar(reader.result);
+        const newForm = new FormData();
+        newForm.append("file", file);
         axios
-          .put(
-            `${server}shop/update-shop-avatar`,
-            { avatar: reader.result },
-            {
-              withCredentials: true,
-            }
-          )
+          .put(`${server}shop/update-shop-avatar`, newForm, {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data", // Optional, Axios should set this
+            },
+          })
           .then((res) => {
             dispatch(loadSeller());
             toast.success("Avatar updated successfully!");

@@ -30,9 +30,9 @@ router.post(
           subject: "Withdraw Request",
           message: `Hello ${req.seller.name}, Your withdraw request of ${amount}$ is processing. It will take 3days to 7days to processing! `,
         });
-        res.status(201).json({
-          success: true,
-        });
+        // res.status(201).json({
+        //   success: true,
+        // });
       } catch (error) {
         return next(new ErrorHandler(error.message, 500));
       }
@@ -43,7 +43,7 @@ router.post(
 
       shop.availableBalance = shop.availableBalance - amount;
 
-      await Shop.save();
+      await shop.save();
 
       res.status(201).json({
         success: true,
@@ -83,7 +83,6 @@ router.put(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { sellerId } = req.body;
-
       const withdraw = await Withdraw.findByIdAndUpdate(
         req.params.id,
         {

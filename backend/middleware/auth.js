@@ -7,7 +7,7 @@ const jsonwebtoken = require("jsonwebtoken");
 exports.isAuthenticated = async (req, res, next) => {
   try {
     const { token } = req.cookies;
-    console.log("token is", token);
+    // console.log("token is", token);
     if (!token) {
       return res
         .status(401)
@@ -28,7 +28,7 @@ exports.isAuthenticated = async (req, res, next) => {
 exports.sellerAuthenticated = async (req, res, next) => {
   try {
     const { seller_token } = req.cookies;
-    console.log("Seller Token is ", seller_token);
+    // console.log("Seller Token is ", seller_token);
     if (!seller_token) {
       return res
         .status(401)

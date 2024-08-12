@@ -11,6 +11,7 @@ const { upload } = require("../multer.js");
 const sendMail = require("../utils/sendMail.js");
 const sendToken = require("../utils/shopToken.js");
 const Order = require("../models/order.js");
+const cloudinary = require("cloudinary");
 const {
   isAuthenticated,
   sellerAuthenticated,
@@ -37,7 +38,6 @@ router.post(
   upload.array("images"),
   async (req, res) => {
     try {
-      // console.log("Api End Point Hit ! ");
       const {
         shopId,
         name,
@@ -54,10 +54,42 @@ router.post(
           .status(404)
           .json({ success: false, message: "Shop Doesn't exist" });
       }
-      const files = req.files;
-      let images = files.map((value, index) => {
-        return { public_id: value.originalname, url: value.filename };
+
+      // const files = req.files;
+      // let images = files.map((value, index) => {
+      //   return { public_id: value.originalname, url: value.filename };
+      // });
+      // cloudinary start
+      // Initialize arrays for storing results
+      let imagesLinks = [];
+      let response = [];
+
+      // Upload all files to Cloudinary
+      const uploadPromises = req.files.map((file) => {
+        return new Promise((resolve, reject) => {
+          cloudinary.v2.uploader.upload(file.path, (error, result) => {
+            if (error) {
+              console.log("cloudinary image upload error:", error);
+              reject(error);
+            } else {
+              console.log("cloudinary image upload result:", result);
+              resolve(result);
+            }
+          });
+        });
       });
+
+      response = await Promise.all(uploadPromises);
+
+      // Map upload results to imagesLinks
+      response.forEach((element) => {
+        imagesLinks.push({
+          public_id: element.public_id,
+          url: element.secure_url,
+        });
+      });
+
+      // cloudinary end
       const productData = {
         shopId,
         name,
@@ -67,7 +99,7 @@ router.post(
         originalPrice,
         discountPrice,
         stock,
-        images,
+        images: response,
       };
       // console.log("Name is : ", name);
       productData.shop = shop;
@@ -125,6 +157,33 @@ router.delete(
       const deletedproduct = await product.findByIdAndDelete({
         _id: req.params.id,
       });
+      if (deletedproduct && deletedproduct.images) {
+        for (let i = 0; i < deletedproduct.images.length; i++) {
+          try {
+            const result = await cloudinary.v2.uploader.destroy(
+              deletedproduct.images[i].public_id
+            );
+            console.log(
+              `Deleted image with public_id ${deletedproduct.images[i].public_id}: ${result.result}`
+            );
+          } catch (error) {
+            console.error(
+              `Failed to delete image with public_id ${deletedproduct.images[i].public_id}:`,
+              error
+            );
+          }
+        }
+      }
+      // for (let i = 0; i < deletedproduct.images.length; i++) {
+      //   console.log("loop run");
+      //   const result = await cloudinary.v2.uploader.destroy(
+      //     deletedproduct.images[i].public_id
+      //   );
+
+      //   console.log(
+      //     `Deleted image with public_id ${deletedproduct.images[i].public_id}: ${result.result}`
+      //   );
+      // }
 
       if (deletedproduct == null) {
         return res

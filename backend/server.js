@@ -11,7 +11,9 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 }
 
 app.listen(process.env.PORT, () => {
-  console.log(`server Is Listening ON Port ${process.env.PORT}`);
+  console.log(
+    `server Is Listening ON ${process.env.frontendurl}:${process.env.PORT}`
+  );
 });
 
 process.on("unhandledRejection", (err) => {

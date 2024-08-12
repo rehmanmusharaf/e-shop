@@ -76,7 +76,7 @@ export const getAllProducts = () => async (dispatch) => {
     console.log("get all Products Data error: ", error);
     dispatch({
       type: "getAllProductsFailed",
-      payload: error.response.data.message,
+      payload: error?.response?.data?.message,
     });
   }
 };

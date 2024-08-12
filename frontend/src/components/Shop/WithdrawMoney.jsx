@@ -87,16 +87,20 @@ const WithdrawMoney = () => {
     if (withdrawAmount < 50 || withdrawAmount > availableBalance) {
       toast.error("You can't withdraw this amount!");
     } else {
-      const amount = withdrawAmount;
-      await axios
-        .post(
-          `${server}create-withdraw-request`,
-          { amount },
-          { withCredentials: true }
-        )
-        .then((res) => {
-          toast.success("Withdraw money request is successful!");
-        });
+      try {
+        const amount = withdrawAmount;
+        await axios
+          .post(
+            `${server}create-withdraw-request`,
+            { amount },
+            { withCredentials: true }
+          )
+          .then((res) => {
+            toast.success("Withdraw money request is successful!");
+          });
+      } catch (error) {
+        console.log("error during craeting the money request:", error);
+      }
     }
   };
 

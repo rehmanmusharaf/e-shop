@@ -8,7 +8,9 @@ var jwt = require("jsonwebtoken");
 // const multer = require("multer");
 const { upload } = require("../multer.js");
 const sendMail = require("../utils/sendMail.js");
+const cloudinary = require("cloudinary");
 const sendToken = require("../utils/shopToken.js");
+
 const {
   isAuthenticated,
   sellerAuthenticated,
@@ -47,6 +49,20 @@ router.post(
           .status(400)
           .json({ success: false, message: "Phone Number not recieve" });
       }
+      // cloudinayr start
+      let avatar;
+      if (req.body.file !== "" || undefined) {
+        const myCloud = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: "shop",
+          width: 150,
+        });
+
+        avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
+      // cloudinary end
 
       const newshop = {
         name,
@@ -55,10 +71,7 @@ router.post(
         zipCode,
         address,
         phoneNumber,
-        avatar: {
-          public_id: req.file.originalname,
-          url: req.file.filename,
-        },
+        avatar,
       };
       const activation_token = await createactivationtoken(newshop);
 
@@ -67,7 +80,7 @@ router.post(
           .status(500)
           .json({ success: false, message: "Error During Getting Token" });
       }
-      const activationurl = `http://localhost:3000/seller-acount/${activation_token}`;
+      const activationurl = `${process.env.frontendurl}/seller-acount/${activation_token}`;
       sendMail({
         email: newshop.email,
         subject: "Activate Your Acount ",
@@ -192,11 +205,26 @@ router.get("/shop/logout", (req, res, next) => {
 router.put(
   "/shop/update-shop-avatar",
   sellerAuthenticated,
+  upload.single("file"),
   async (req, res, next) => {
     try {
       let existsSeller = await shopmodel.findById(req.seller._id);
+      // console.log("req.file is:", req.file);
+      if (req.body.file !== "") {
+        const imageId = existsSeller.avatar.public_id;
+        await cloudinary.v2.uploader.destroy(imageId);
 
-      const imageId = existsSeller.avatar.public_id;
+        const myCloud = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: "avatars",
+          width: 150,
+        });
+
+        existsSeller.avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
+      // const imageId = existsSeller.avatar.public_id;
 
       // await cloudinary.v2.uploader.destroy(imageId);
 
@@ -344,6 +372,21 @@ router.delete(
       res.status(201).json({
         success: true,
         seller,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+// get shop info
+router.get(
+  "/get-shop-info/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const shop = await shopmodel.findById(req.params.id);
+      res.status(201).json({
+        success: true,
+        shop,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

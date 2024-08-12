@@ -1,6 +1,6 @@
-// import axios from "axios";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-// import { server } from "../../server";
+import { server } from "../../server";
 
 const CountDown = ({ data }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
@@ -16,13 +16,20 @@ const CountDown = ({ data }) => {
       typeof timeLeft.minutes === "undefined" &&
       typeof timeLeft.seconds === "undefined"
     ) {
-      //   axios.delete(`${server}/event/delete-shop-event/${data._id}`);
+      // axios
+      //   .delete(`${server}delete-shop-event/${data._id}`)
+      //   .then((res) => {
+      //     console.log("response of deleting an event!", res);
+      //   })
+      //   .catch((error) => {
+      //     console.log("error of deleting an event!", error);
+      //   });
     }
     return () => clearTimeout(timer);
   });
 
   function calculateTimeLeft() {
-    const difference = +new Date(data.Finish_Date) - +new Date();
+    const difference = +new Date(data?.Finish_Date) - +new Date();
     let timeLeft = {};
 
     if (difference > 0) {

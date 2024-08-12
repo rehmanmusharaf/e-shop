@@ -149,10 +149,11 @@ const UserInbox = () => {
 
   const handleImageUpload = async (e) => {
     const reader = new FileReader();
-
+    console.log("handle image upload func run!");
     reader.onload = () => {
       if (reader.readyState === 2) {
         setImages(reader.result);
+        console.log("image successfully read!");
         imageSendingHandler(reader.result);
       }
     };
@@ -180,12 +181,13 @@ const UserInbox = () => {
           conversationId: currentChat._id,
         })
         .then((res) => {
+          console.log("response of image upload:", res);
           setImages();
           setMessages([...messages, res.data.message]);
           updateLastMessageForImage();
         });
     } catch (error) {
-      console.log(error);
+      console.log("image upload error:", error);
     }
   };
 
@@ -273,6 +275,7 @@ const MessageList = ({
       try {
         const res = await axios.get(`${server}get-shop-info/${userId}`);
         setUser(res.data.shop);
+        console.log("user is", res.data.shop);
       } catch (error) {
         console.log(error);
       }

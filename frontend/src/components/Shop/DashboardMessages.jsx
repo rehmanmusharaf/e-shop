@@ -150,12 +150,14 @@ const DashboardMessages = () => {
   };
 
   const handleImageUpload = async (e) => {
+    console.log("handleImageUpload function run!");
     const reader = new FileReader();
 
     reader.onload = () => {
       if (reader.readyState === 2) {
         setImages(reader.result);
         imageSendingHandler(reader.result);
+        console.log("file read succesfully!");
       }
     };
 
@@ -185,9 +187,10 @@ const DashboardMessages = () => {
           setImages();
           setMessages([...messages, res.data.message]);
           updateLastMessageForImage();
+          console.log("response of picture, ", res);
         });
     } catch (error) {
-      console.log(error);
+      console.log("error while uploading image", error);
     }
   };
 

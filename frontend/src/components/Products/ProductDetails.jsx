@@ -37,7 +37,7 @@ const ProductDetails = ({ data }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // console.log("data in Product Detail Section : ", data);
+    console.log("data in Product Detail Section : ", data);
     dispatch(getAllProductsShop(data && data?.shop._id));
     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
       setClick(true);
@@ -222,7 +222,7 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center pt-8">
                   <Link to={`/shop/preview/${data?.shop._id}`}>
                     <img
-                      src={`${server}${data?.shop?.avatar?.url}`}
+                      src={`${data?.shop?.avatar?.url}`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />

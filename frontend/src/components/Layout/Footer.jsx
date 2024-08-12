@@ -1,4 +1,7 @@
 import React from "react";
+import { FaLinkedin } from "react-icons/fa";
+import { TbBrandFiverr } from "react-icons/tb";
+import { TbBrandUpwork } from "react-icons/tb";
 import {
   AiFillFacebook,
   AiFillInstagram,
@@ -44,19 +47,36 @@ const Footer = () => {
           <br />
           <p>The home and elements needeed to create beatiful products.</p>
           <div className="flex items-center mt-[15px]">
-            <AiFillFacebook size={25} className="cursor-pointer" />
-            <AiOutlineTwitter
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
-            <AiFillInstagram
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
-            <AiFillYoutube
-              size={25}
-              style={{ marginLeft: "15px", cursor: "pointer" }}
-            />
+            <Link
+              to="https://www.linkedin.com/in/muhammad-rehman-musharaf-7b3175265/"
+              target="_blank"
+            >
+              <FaLinkedin size={25} className="cursor-pointer" />
+            </Link>
+            <Link to="https://www.fiverr.com/rehmanmusharaf" target="_blank">
+              <TbBrandFiverr
+                size={25}
+                style={{ marginLeft: "15px", cursor: "pointer" }}
+              />
+            </Link>
+            <Link
+              to="https://www.upwork.com/freelancers/muhammadrehmanm2"
+              target="_blank"
+            >
+              <TbBrandUpwork
+                size={25}
+                style={{ marginLeft: "15px", cursor: "pointer" }}
+              />
+            </Link>
+            <Link
+              to="https://www.youtube.com/@muhammadrehmanmusharafali"
+              target="_blank"
+            >
+              <AiFillYoutube
+                size={25}
+                style={{ marginLeft: "15px", cursor: "pointer" }}
+              />
+            </Link>
           </div>
         </ul>
 
@@ -110,7 +130,7 @@ const Footer = () => {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10
          text-center pt-2 text-gray-400 text-sm pb-8"
       >
-        <span>© 2020 Becodemy. All rights reserved.</span>
+        <span>© 2024 Muhammad Rehman. All rights reserved.</span>
         <span>Terms · Privacy Policy</span>
         <div className="sm:block flex items-center justify-center w-full">
           <img

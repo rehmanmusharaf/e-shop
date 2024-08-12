@@ -3,17 +3,20 @@ import { server } from "../../server";
 
 export const createevent = (eventdata) => async (dispatch) => {
   try {
-    eventdata.images = "";
+    // for (let [key, value] of eventdata.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
+
+    // eventdata.images = "";
     dispatch({ type: "createEvent" });
     const { data } = await axios.post(
       `${server}event/create-event`,
       eventdata,
-      {
-        widthCredentials: true,
-      }
+      { withCredentials: true }
     );
     dispatch({ type: "createEventSuccessfull", payload: data });
   } catch (error) {
+    console.log("error suring event creation!", error);
     dispatch({
       type: "createEventFailed",
       payload: error.response.data.message,
@@ -50,6 +53,27 @@ export const deleteEvent = (id) => async (dispatch) => {
     // console.log(error);
     dispatch({
       type: "deleteEventFailed",
+      payload: error.response.data.message,
+    });
+  }
+};
+
+// get all events
+export const getAllEvents = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: "getAlleventsRequest",
+    });
+    const { data } = await axios.get(`${server}get-all-events`);
+    // console.log("all Events Are: ", data);
+    dispatch({
+      type: "getAlleventsSuccess",
+      payload: data.events,
+    });
+  } catch (error) {
+    // console.log("error during getting all events!", error);
+    dispatch({
+      type: "getAlleventsFailed",
       payload: error.response.data.message,
     });
   }

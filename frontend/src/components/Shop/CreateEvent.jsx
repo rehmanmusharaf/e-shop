@@ -48,11 +48,11 @@ const CreateEvent = () => {
     if (error) {
       toast.error(error);
     }
-    if (success) {
-      toast.success("Event created successfully!");
-      navigate("/dashboard-events");
-      window.location.reload();
-    }
+    // if (success) {
+    //   toast.success("Event created successfully!");
+    //   navigate("/dashboard-events");
+    //   window.location.reload();
+    // }
   }, [dispatch, error, success]);
   //   ,
   const handleImageChange = (e) => {

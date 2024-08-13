@@ -7,7 +7,7 @@ const ErrorHandler = require("./utils/Errorhandler");
 const shop = require("./contollers/shop.js");
 const cors = require("cors");
 const coupons = require("./contollers/coupons.js");
-const shopmodel = require("./models/shopmodel.js");
+const shopmodel = require("./models/sho pmodel.js");
 const productmodel = require("./models/product.js");
 const orders = require("./contollers/order.js");
 const conversation = require("./contollers/conversation.js");
@@ -17,9 +17,13 @@ const cloudinary = require("cloudinary").v2;
 // var upload = multer();
 const corsOptions = {
   origin: process.env.frontendurl,
-  credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204,
 };
+// origin: process.env.frontendurl,
+// credentials: true, //access-control-allow-credentials:true
+// optionSuccessStatus: 200,
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());

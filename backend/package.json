@@ -2,11 +2,11 @@
   "name": "e-shop-tutorial",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node backend/server.js",
-    "start": "nodemon backend/server.js"
+    "dev": "node server.js",
+    "start": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",

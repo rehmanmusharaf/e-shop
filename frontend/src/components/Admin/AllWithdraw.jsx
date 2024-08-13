@@ -92,7 +92,10 @@ const AllWithdraw = () => {
       )
       .then((res) => {
         toast.success("Withdraw request updated successfully!");
-        setData(res.data.withdraws);
+        console.log("WithDraw Data is:", res?.data?.withdraw);
+        setData((prev) => {
+          return [...prev, res?.data?.withdraw];
+        });
         setOpen(false);
       });
   };

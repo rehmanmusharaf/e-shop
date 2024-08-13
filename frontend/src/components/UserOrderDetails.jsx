@@ -99,7 +99,6 @@ const UserOrderDetails = () => {
           <h1 className="pl-2 text-[25px]">Order Details</h1>
         </div>
       </div>
-
       <div className="w-full flex items-center justify-between pt-6">
         <h5 className="text-[#00000084]">
           Order ID: <span>#{data?._id?.slice(0, 8)}</span>
@@ -108,7 +107,6 @@ const UserOrderDetails = () => {
           Placed on: <span>{data?.createdAt?.slice(0, 10)}</span>
         </h5>
       </div>
-
       {/* order items */}
       <br />
       <br />
@@ -138,7 +136,6 @@ const UserOrderDetails = () => {
             </div>
           );
         })}
-
       {/* review popup */}
       {open && (
         <div className="w-full fixed top-0 left-0 h-screen bg-[#0005] z-50 flex items-center justify-center">
@@ -224,7 +221,6 @@ const UserOrderDetails = () => {
           </div>
         </div>
       )}
-
       <div className="border-t w-full text-right">
         <h5 className="pt-3 text-[18px]">
           Total Price: <strong>US${data?.totalPrice}</strong>
@@ -262,7 +258,8 @@ const UserOrderDetails = () => {
         </div>
       </div>
       <br />
-      <button onClick={handleMessageSubmit}>
+      {/* // onClick={handleMessageSubmit} */}
+      <button>
         <div className={`${styles.button} text-white`}>Send Message</div>
       </button>
       <br />

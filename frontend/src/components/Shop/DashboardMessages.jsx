@@ -9,7 +9,8 @@ import styles from "../../style/style";
 import { TfiGallery } from "react-icons/tfi";
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
-const ENDPOINT = "http://localhost:4000/";
+import { ENDPOINT } from "../../server";
+// const ENDPOINT = "http://localhost:4000/";
 const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 const DashboardMessages = () => {

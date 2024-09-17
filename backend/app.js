@@ -65,7 +65,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 app.get("/", (req, res) => {
-  // console.log("Server IS Listning!");
+  console.log("frontend url is: ", process.env.frontendurl);
   try {
     return res.send("<h1>Server IS Listning!</h1>");
   } catch (error) {

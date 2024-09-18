@@ -3,16 +3,26 @@ const sendToken = async (user, statuscode, res) => {
     console.log("Send Token function run!");
     const token = await user.getJwtToken();
     console.log("token is  : ", token);
-    // const option = {
-    //   expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-    //   httpOnly: true,
-    // };
     const option = {
       expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set secure flag to true in production
       sameSite: "None", // Necessary for cross-site requests
     };
+    // const option = {
+    //   expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production", // Set secure flag to true in production
+    //   sameSite: "None", // Necessary for cross-site requests
+    // };
+    // Options for cookies
+    // const options = {
+    //   expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    //   httpOnly: true,
+    //   sameSite: "none",
+    //   secure: true,
+    // };
+
     res
       .status(statuscode)
       .cookie("token", token, option)

@@ -15,16 +15,22 @@ const withdraw = require("./contollers/withdraw.js");
 const cloudinary = require("cloudinary").v2;
 // const multer = require("multer");
 // var upload = multer();
-const corsOptions = {
-  origin: process.env.frontendurl,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
-  optionsSuccessStatus: 204,
-};
+// const corsOptions = {
+//   origin: process.env.frontendurl,
+//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   credentials: true,
+//   optionsSuccessStatus: 204,
+// };
+app.use(
+  cors({
+    origin: [process.env.frontendurl],
+    credentials: true,
+  })
+);
 // origin: process.env.frontendurl,
 // credentials: true, //access-control-allow-credentials:true
 // optionSuccessStatus: 200,
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/", express.static("uploads"));
